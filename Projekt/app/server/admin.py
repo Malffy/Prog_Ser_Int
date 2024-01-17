@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import Server, Stats, Vote, Section, Post
 
 # Register your models here.

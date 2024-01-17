@@ -1,10 +1,12 @@
-from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
+from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS, IsAdminUser
 from rest_framework.authentication import TokenAuthentication
-
+from rest_framework import viewsets, generics
+from rest_framework import permissions
 
 from .models import Server, Stats, Vote, Section, Post
-from rest_framework import viewsets
 from .serializers import ServerSerializer, StatsSerializer, VoteSerializer, SectionSerializer, PostSerializer
+
+
 
 # Create your views here.
 
@@ -21,6 +23,18 @@ class IsAdminOrReadOnly(BasePermission):
             request.user.is_staff
         )
 
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Dostęp tylko do właściciela obiektu, edycja tylko przez właściciela.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Dozwól zawsze GET, HEAD, lub OPTIONS
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # Dozwól edycję lub usunięcie tylko właścicielowi obiektu
+        return obj.user == request.user
 
 class ServerViewSet(viewsets.ModelViewSet):
     serializer_class = ServerSerializer
@@ -46,12 +60,18 @@ class VoteViewSet(viewsets.ModelViewSet):
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    queryset = Post.objects.all()
+    permission_classes = (IsOwnerOrReadOnly,)
 
+    def get_queryset(self):
+        # Zwróć wpisy tylko dla zalogowanego użytkownika
+        return Post.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Przypisz zalogowanego użytkownika jako autora wpisu
+        serializer.save(user=self.request.user)
 
 class SectionViewSet(viewsets.ModelViewSet):
     serializer_class = SectionSerializer
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminOrReadOnly, )
     queryset = Section.objects.all()

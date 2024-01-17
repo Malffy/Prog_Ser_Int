@@ -1,0 +1,133 @@
+Step-by-step Quick Set-Up Guide:
+1. Tworzymy nowy projekt
+2. Usuwamy interpreter z listy
+3. Usuwamy interpreter z folderu
+4. Przenosimy plik requirement.txt do folderu projektu (Dobra praktyka: pip freeze > requirements.txt)
+5. Pobieramy z niego wszystkie biblioteki: pip install -r requirements.txt
+6. Tworzymy projekt Django za pomocą: django-admin startproject app
+7. Uruchamiamy serwer za pomocą: python manage.py runserver
+8. Po więcej przydatnych komend CTRL + C, CTRL + V : Lista najczęściej używanych komend z Django | ChatGPT
+
+
+Notatka Kuby, czysto informacyjnie: """""""""""""""""""""""""""""""""""""""""""""""
+
+stwórz projekt
+zainstaluj django: python -m pip install Django
+stwórz projekt django: django-admin startproject nazwa_projektu
+wejdź do aplikacji: cd nazwa_projektu
+uruchom serwer: python manage.py runserver
+tworzymy funkcjonalność: python manage.py startapp nazwa_aplikacji
+
+polecenia:
+
+python manage.py migrate - wprowadza zmiany
+python manage.py createsuperuser - tworzy admina
+python manage.py runserver - odpala serwer
+
+Schemat aplikacji:
+1. models - tworzymy modele w bazie danych
+2. serializer - tworzymy jsona
+3. views - tworzymy widok
+4. url - dodajemy ścieżkę w linku
+5. url projektu - dodajemy ścieżkę aplikacji
+6. settings projektu - dodajemy aplikację
+
+zainstalować swagger (sprawdza, czy masz napisane funkcjonalności)
+stworzyć plik requirements.txt za pomocą pip freeze
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Funkcjonalności do spełnienia NAJWAŻNIEJSZE !!!!!!!:
+
+1.Działy forum +
+2.Zarządzanie działami forum przez administratora +
+3.Wysyłanie wpisów +
+4.Zarządanie wpisami przez administratora +
+5.Statystyki serwerów +/-
+6.Głosowanie na serwer -
+7.Lista zalogowanych użytkowników -
+8.Wiadomości między użytkownikami -
+
+Szybki opis sytuacji DLA SPOKA:
+Mam pobranego użytkownika 1:1 z projektu naszego prowadzącego, wszystko z nim działa.
+Pierwsze 4 punkty funkcjonalności to tylko odpowiednio poukładane modele, które są podłączone do bazy danych,
+url.py, serializers.py, views.py, czyli wszystko z nimi w porządku.
+
+Skupiamy się na razie na zrobieniu rankingu serverów, na podstawie liczby głosów oddanych na konkretne
+serwery przez użytkowników patrz model Vote i Stats w models.py . - Głosowanie na serwer, Statystki serwerów
+oraz wyświetleniu listy zalogowanych użytkowników.
+
+Są to metody metody typu get i post, które piszę się głównie w views.py, prowadzący podpowiedział mi, że
+aby wyświetlić listę aktualnie zalogowanych użytkownikach w models.py usera mam dodać is_logged,
+które będę manualnie w panelu admina zmieniał na tak lub nie, chodzi jedynie o wyświetlenie tych którzy mają, że są
+zalogowani(ez mode, tak żeby po prostu było), setup wszystkiego, jesli będziesz miał zaintalowane, albo pokazanie co i jak działa
+dla Ciebie u mnie zajmie mi z 30 minut, nie jest to trudne ale raczej bez mojego wstępnego wytłumaczenia nie zaczniesz samodzielnej
+pracy.
+
+
+
+Notatka teoretyczna (read-once-type)""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Oto krótkie opisy i wyjaśnienia dla serializatorów (serializers), widoków (views), modeli i URL w kontekście aplikacji Django:
+
+1. **Serializery (Serializers):**
+- **Do czego służą:** Serializatory w Django służą do konwersji danych między formatem Pythona a formatem, 
+		   który można łatwo przesyłać przez sieć, na przykład JSON. Są używane głównie w Django REST Framework do mapowania
+ 		   modeli na formaty takie jak JSON, które mogą być zwracane w odpowiedziach HTTP.
+
+- **Jak działają:** Serializatory definiują, które pola modelu mają być uwzględnione w serializacji, a także jakie formatowanie ma być używane.
+		Mogą również zawierać logikę walidacji danych wejściowych przed zapisaniem ich w bazie danych.
+
+2. **Widoki (Views):**
+- **Do czego służą:** Widoki obsługują żądania HTTP od klientów i zwracają odpowiedzi. W kontekście Django REST Framework,
+ 		    widoki definiują logikę biznesową dla różnych endpointów API.
+
+    - **Jak działają:** Widoki przyjmują żądania HTTP, przetwarzają je i zwracają odpowiedzi. W przypadku Django REST Framework,
+ 		   mogą korzystać z serializatorów do konwersji danych między modelem a odpowiedzią HTTP.
+
+3. **Modele (Models):**
+    - **Do czego służą:** Modele reprezentują strukturę i zachowanie danych w bazie danych. Są używane do definiowania tabel w bazie danych, 
+		         a także do interakcji z danymi w tych tabelach.
+
+    - **Jak działają:** Modele definiują pola, typy danych, relacje między tabelami, a także metody do operacji na danych. 
+		   Są używane do tworzenia, odczytywania, aktualizacji i usuwania rekordów w bazie danych.
+
+4. **URL (Uniform Resource Locator):**
+    - **Do czego służą:** Adresy URL określają, jakie zasoby są dostępne w aplikacji oraz jakie operacje można na nich wykonać. 
+		        W przypadku Django, pliki URL definiują mapowanie ścieżek URL na konkretne widoki w aplikacji.
+
+    - **Jak działają:** Po otrzymaniu żądania HTTP, Django przegląda zdefiniowane pliki URL, aby określić, do jakiego widoku przekierować żądanie. 
+		   URL zawierają wzorce, które są porównywane z częścią ścieżki żądania, aby zidentyfikować,
+		   który widok powinien obsłużyć dane żądanie.
+
+Wspólnie te komponenty pozwalają na rozwinięcie aplikacji w oparciu o architekturę Django, zgodną z zasadami RESTful API, co ułatwia
+ tworzenie i obsługę interfejsów programistycznych dla aplikacji internetowych.
+
+
+Oczywiście, chętnie wyjaśnię działanie kodu do wyświetlania listy zalogowanych użytkowników w Django przy użyciu serializatorów, widoków, 
+modeli i URL-ów.
+
+1. **Model `OnlineUser` (models.py):**
+   - Tworzony jest model `OnlineUser`, który reprezentuje informacje o zalogowanych użytkownikach. Model ten zawiera relację `OneToOneField` 
+      do wbudowanego modelu `User` z `django.contrib.auth.models`, co umożliwia powiązanie każdego `OnlineUser` z jednym `User`.
+
+2. **Sygnały (`receiver`) do aktualizacji aktywności (`models.py`):**
+   - Przy użyciu sygnałów, rejestrowane są funkcje (`receiver`), które zostaną wywołane w określonych momentach.
+   - `create_online_user` tworzy obiekt `OnlineUser` dla nowo utworzonego użytkownika.
+   - `update_online_user_on_login` aktualizuje datę ostatniego logowania, gdy użytkownik się zaloguje.
+   - `update_online_user_on_logout` ustawia wartość `last_activity` na `None`, gdy użytkownik się wyloguje.
+
+3. **Serializator `OnlineUserSerializer` (serializers.py):**
+   - Serializator określa, jakie pola z modelu `OnlineUser` mają być uwzględnione w odpowiedzi API. W tym przypadku, wszystkie pola są uwzględnione.
+
+4. **Widok `ActiveUserList` (views.py):**
+   - Widok dziedziczy po `generics.ListAPIView` z Django REST Framework.
+   - Jest skonfigurowany z użyciem `IsAuthenticated` jako uprawnień, co oznacza, że tylko zalogowani użytkownicy mogą uzyskać dostęp do tej listy.
+   - Metoda `get_queryset` definiuje, jakie dane mają być zwrócone. W tym przypadku, pobierane są wszystkie obiekty `OnlineUser`, które mają ustawioną
+     datę `last_activity`.
+
+5. **Ścieżki URL (`urls.py`):**
+   - W pliku `urls.py` dodawane są odpowiednie ścieżki, które mapują do widoku `ActiveUserList`. Na przykład, ścieżka 'active-users/' zostaje przypisana
+      do widoku `ActiveUserList`.
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

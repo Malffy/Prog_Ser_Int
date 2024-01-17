@@ -1,6 +1,6 @@
 from django.db import models
 from app import settings
-
+from django.db import models
 
 class Server(models.Model):
     server_name = models.CharField(max_length=255)
@@ -14,20 +14,16 @@ class Server(models.Model):
 class Stats(models.Model):
     server = models.ForeignKey(Server, on_delete=models.CASCADE)
     player_count = models.IntegerField()
-    rank = models.IntegerField()
+    votes = models.IntegerField()
 
     def __str__(self):
         return f'{self.server}'
 
 
 class Vote(models.Model):
-    VOTE = {
-        "YES": "YES",
-        "NO": "NO"
-    }
     server = models.ForeignKey(Server, on_delete=models.CASCADE)
     user_who_voted = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    vote = models.CharField(max_length=255, choices=VOTE)
+    vote = models.BooleanField()
 
     def __str__(self):
         return f'{self.user_who_voted} - {self.vote} '
