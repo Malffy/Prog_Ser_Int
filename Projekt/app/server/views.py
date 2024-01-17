@@ -1,7 +1,10 @@
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS, IsAdminUser
 from rest_framework.authentication import TokenAuthentication
-from rest_framework import viewsets, generics
-from rest_framework import permissions
+from rest_framework import viewsets, generics, permissions, status
+
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .models import Server, Stats, Vote, Section, Post
 from .serializers import ServerSerializer, StatsSerializer, VoteSerializer, SectionSerializer, PostSerializer
@@ -55,6 +58,33 @@ class VoteViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     queryset = Vote.objects.all()
+
+    @action(detail=True, methods=['post'])
+    def vote(self, request, pk=None):
+        server = get_object_or_404(Server, id=pk)
+        user = request.user
+
+        # Sprawdź, czy użytkownik już zagłosował
+        existing_vote = Vote.objects.filter(server=server, user_who_voted=user).first()
+        if existing_vote:
+            return Response({'detail': 'You have already voted for this server.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Zapisz nowy głos
+        vote = request.data.get('vote', None)
+        if vote not in ['YES', 'NO']:
+            return Response({'detail': 'Invalid vote value.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        Vote.objects.create(server=server, user_who_voted=user, vote=vote)
+
+        # Aktualizuj statystyki
+        stats, created = Stats.objects.get_or_create(server=server)
+        if vote == 'YES':
+            stats.votes += 1
+        else:
+            stats.votes -= 1
+        stats.save()
+
+        return Response({'detail': 'Vote submitted successfully.'}, status=status.HTTP_201_CREATED)
 
 
 class PostViewSet(viewsets.ModelViewSet):

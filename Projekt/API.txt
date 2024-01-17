@@ -43,9 +43,9 @@ Funkcjonalności do spełnienia NAJWAŻNIEJSZE !!!!!!!:
 2.Zarządzanie działami forum przez administratora +
 3.Wysyłanie wpisów +
 4.Zarządanie wpisami przez administratora +
-5.Statystyki serwerów +/-
+5.Statystyki serwerów -
 6.Głosowanie na serwer -
-7.Lista zalogowanych użytkowników -
+7.Lista zalogowanych użytkowników +
 8.Wiadomości między użytkownikami -
 
 Szybki opis sytuacji DLA SPOKA:
@@ -131,3 +131,14 @@ modeli i URL-ów.
       do widoku `ActiveUserList`.
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+    def get_object(self):
+        """Retrieve and return authenticated user"""
+        if self.request.user.is_logged:
+            return self.request.user.name
+
+python manage.py makemigrations
+
+    "server": 1,
+    "user_who_voted": 2,
+    "vote": "YES"

@@ -10,5 +10,6 @@ router.register(r'vote', VoteViewSet)
 router.register(r'post', PostViewSet, basename='post')
 router.register(r'section', SectionViewSet)
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('server/<int:pk>/vote/', VoteViewSet.as_view({'post': 'vote'}), name='server-vote'),
 ]

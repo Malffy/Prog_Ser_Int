@@ -17,7 +17,7 @@ class StatsSerializer(serializers.ModelSerializer):
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
-        fields = '__all__'
+        fields = ['vote']
 
 
 class SectionSerializer(serializers.ModelSerializer):

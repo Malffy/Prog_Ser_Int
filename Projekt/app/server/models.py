@@ -21,9 +21,13 @@ class Stats(models.Model):
 
 
 class Vote(models.Model):
+    VOTE = {
+        "YES": "YES",
+        "NO": "NO"
+    }
     server = models.ForeignKey(Server, on_delete=models.CASCADE)
     user_who_voted = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    vote = models.BooleanField()
+    vote = models.CharField(max_length=255, choices=VOTE)
 
     def __str__(self):
         return f'{self.user_who_voted} - {self.vote} '
